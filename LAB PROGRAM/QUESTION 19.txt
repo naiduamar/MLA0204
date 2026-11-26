@@ -1,0 +1,138 @@
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score, classification_report
+
+# Create sample bank loan dataset
+data = {
+    'Income': ['High', 'Low', 'High', 'Medium', 'Low',
+               'High', 'Medium', 'Low', 'High', 'Medium',
+               'Low', 'High', 'Medium', 'Low'],
+    'Credit_History': ['Good', 'Bad', 'Good', 'Good', 'Bad',
+                       'Good', 'Bad', 'Bad', 'Good', 'Good',
+                       'Bad', 'Good', 'Good', 'Bad'],
+    'Employment': ['Yes', 'No', 'Yes', 'Yes', 'No',
+                   'Yes', 'No', 'No', 'Yes', 'Yes',
+                   'No', 'Yes', 'Yes', 'No'],
+    'Loan_Amount': ['High', 'Low', 'Medium', 'High', 'Low',
+                    'Medium', 'Low', 'High', 'High', 'Medium',
+                    'Low', 'Medium', 'High', 'Low'],
+    'Loan_Status': ['Approved', 'Rejected', 'Approved',
+                    'Approved', 'Rejected', 'Approved',
+                    'Rejected', 'Rejected', 'Approved',
+                    'Approved', 'Rejected', 'Approved',
+                    'Approved', 'Rejected']
+}
+
+df = pd.DataFrame(data)
+
+print("Bank Loan Dataset:\n")
+print(df)
+
+# Convert categorical values into numerical values
+encoders = {}
+
+for column in df.columns:
+    le = LabelEncoder()
+    df[column] = le.fit_transform(df[column])
+    encoders[column] = le
+
+# Separate input and output
+X = df.drop('Loan_Status', axis=1)
+y = df['Loan_Status']
+
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=42, stratify=y
+)
+
+# Create Naive Bayes model
+model = GaussianNB()
+
+# Train model
+model.fit(X_train, y_train)
+
+print("\nNaive Bayes model trained successfully.")
+
+# Predict test data
+y_pred = model.predict(X_test)
+
+print("\nActual Loan Status:")
+print(encoders['Loan_Status'].inverse_transform(y_test))
+
+print("\nPredicted Loan Status:")
+print(encoders['Loan_Status'].inverse_transform(y_pred))
+
+# Calculate accuracy
+accuracy = accuracy_score(y_test, y_pred)
+
+print("\nAccuracy:", accuracy * 100, "%")
+
+print("\nClassification Report:")
+print(classification_report(
+    y_test, y_pred,
+    target_names=encoders['Loan_Status'].classes_,
+    zero_division=0
+))
+
+# Predict for a new applicant
+new_applicant = pd.DataFrame(
+    [['High', 'Good', 'Yes', 'Medium']],
+    columns=['Income', 'Credit_History', 'Employment', 'Loan_Amount']
+)
+
+# Encode new applicant using existing encoders
+for column in new_applicant.columns:
+    new_applicant[column] = encoders[column].transform(
+        new_applicant[column]
+    )
+
+prediction = model.predict(new_applicant)
+
+result = encoders['Loan_Status'].inverse_transform(prediction)
+
+print("\nNew Applicant Loan Prediction:", result[0])
+
+--------------------------------------------------------------------------------------------------------------
+Bank Loan Dataset:
+
+    Income Credit_History Employment Loan_Amount Loan_Status
+0     High           Good        Yes        High    Approved
+1      Low            Bad         No         Low    Rejected
+2     High           Good        Yes      Medium    Approved
+3   Medium           Good        Yes        High    Approved
+4      Low            Bad         No         Low    Rejected
+5     High           Good        Yes      Medium    Approved
+6   Medium            Bad         No         Low    Rejected
+7      Low            Bad         No        High    Rejected
+8     High           Good        Yes        High    Approved
+9   Medium           Good        Yes      Medium    Approved
+10     Low            Bad         No         Low    Rejected
+11    High           Good        Yes      Medium    Approved
+12  Medium           Good        Yes        High    Approved
+13     Low            Bad         No         Low    Rejected
+
+Naive Bayes model trained successfully.
+
+Actual Loan Status:
+['Rejected' 'Rejected' 'Approved' 'Approved']
+
+Predicted Loan Status:
+['Rejected' 'Rejected' 'Approved' 'Approved']
+
+Accuracy: 100.0 %
+
+Classification Report:
+              precision    recall  f1-score   support
+
+    Approved       1.00      1.00      1.00         2
+    Rejected       1.00      1.00      1.00         2
+
+    accuracy                           1.00         4
+   macro avg       1.00      1.00      1.00         4
+weighted avg       1.00      1.00      1.00         4
+
+
+New Applicant Loan Prediction: Approved

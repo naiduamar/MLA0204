@@ -1,0 +1,99 @@
+
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error, r2_score
+
+# Create sample sales dataset
+data = {
+    'Month': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+    'Sales': [100, 120, 130, 150, 160, 180,
+              200, 210, 230, 250, 270, 300]
+}
+
+df = pd.DataFrame(data)
+
+print("Sales Dataset:\n")
+print(df)
+
+# Separate input and output
+X = df[['Month']]
+y = df['Sales']
+
+# Create Linear Regression model
+model = LinearRegression()
+
+# Train the model
+model.fit(X, y)
+
+print("\nLinear Regression model trained successfully.")
+
+# Predict existing sales
+y_pred = model.predict(X)
+
+print("\nActual Sales:")
+print(list(y))
+
+print("\nPredicted Sales:")
+print(y_pred.round(2))
+
+# Evaluate model
+print("\nMean Absolute Error:",
+      mean_absolute_error(y, y_pred))
+
+print("R2 Score:", r2_score(y, y_pred))
+
+# Predict future sales for next 3 months
+future_months = pd.DataFrame({'Month': [13, 14, 15]})
+
+future_sales = model.predict(future_months)
+
+print("\nFuture Sales Prediction:")
+
+for month, sales in zip(future_months['Month'], future_sales):
+    print("Month", month, "Predicted Sales:", round(sales, 2))
+
+# Plot sales graph
+plt.scatter(X, y, color='blue', label='Actual Sales')
+plt.plot(X, y_pred, color='red', label='Predicted Sales')
+
+plt.xlabel('Month')
+plt.ylabel('Sales')
+plt.title('Future Sales Prediction using Linear Regression')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+----------------------------------------------------------------------------------------------------------
+ Sales Dataset:
+
+    Month  Sales
+0       1    100
+1       2    120
+2       3    130
+3       4    150
+4       5    160
+5       6    180
+6       7    200
+7       8    210
+8       9    230
+9      10    250
+10     11    270
+11     12    300
+
+Linear Regression model trained successfully.
+
+Actual Sales:
+[100, 120, 130, 150, 160, 180, 200, 210, 230, 250, 270, 300]
+
+Predicted Sales:
+[ 96.28 113.62 130.97 148.31 165.65 183.   200.34 217.68 235.02 252.37
+ 269.71 287.05]
+
+Mean Absolute Error: 4.17055167055167
+R2 Score: 0.9917707196723338
+
+Future Sales Prediction:
+Month 13 Predicted Sales: 304.39
+Month 14 Predicted Sales: 321.74
+Month 15 Predicted Sales: 339.08

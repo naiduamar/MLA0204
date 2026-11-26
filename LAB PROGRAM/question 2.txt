@@ -1,0 +1,24 @@
+Training Data:
+['Sunny', 'Warm', 'Normal', 'Strong', 'Warm', 'Same', 'yes']
+['Sunny', 'Warm', 'High', 'Strong', 'Warm', 'Same', 'yes']
+['Rainy', 'Cold', 'High', 'Strong', 'Warm', 'Change', 'no']
+['Sunny', 'Warm', 'High', 'Strong', 'Cool', 'Change', 'yes']
+
+Specific Boundary (S):
+[['Sunny', 'Warm', 'Normal', 'Strong', 'Warm', 'Same']]
+
+General Boundary (G):
+[['?', '?', '?', '?', '?', '?']]
+
+Final Specific Boundary:
+[['Sunny', 'Warm', '?', 'Strong', '?', '?']]
+
+Final General Boundary:
+[['Sunny', '?', '?', '?', '?', '?'],
+ ['?', 'Warm', '?', '?', '?', '?']]
+------------------------------------------------------------------------------------------------------------------------------------------
+Final Specific Boundary (S):
+[['Sunny', 'Warm', '?', 'Strong', '?', '?']]
+
+Final General Boundary (G):
+[['Sunny', '?', '?', '?', '?', '?'], ['?', 'Warm', '?', '?', '?', '?']]

@@ -1,0 +1,62 @@
+import numpy as np
+
+# Input dataset (XOR)
+X = np.array([
+    [0, 0],
+    [0, 1],
+    [1, 0],
+    [1, 1]
+])
+
+y = np.array([[0], [1], [1], [0]])
+
+# Initialize weights and biases
+np.random.seed(42)
+
+W1 = np.random.randn(2, 4)
+b1 = np.zeros((1, 4))
+
+W2 = np.random.randn(4, 1)
+b2 = np.zeros((1, 1))
+
+# Sigmoid function
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+# Training
+learning_rate = 0.5
+
+for epoch in range(10000):
+
+    # Forward propagation
+    hidden = sigmoid(np.dot(X, W1) + b1)
+    output = sigmoid(np.dot(hidden, W2) + b2)
+
+    # Calculate error
+    error = y - output
+
+    # Backpropagation
+    d_output = error * output * (1 - output)
+
+    d_hidden = np.dot(d_output, W2.T) * hidden * (1 - hidden)
+
+    W2 += learning_rate * np.dot(hidden.T, d_output)
+    b2 += learning_rate * np.sum(d_output, axis=0, keepdims=True)
+
+    W1 += learning_rate * np.dot(X.T, d_hidden)
+    b1 += learning_rate * np.sum(d_hidden, axis=0, keepdims=True)
+
+# Display results
+print("Input and Predicted Output:")
+
+for i in range(len(X)):
+    hidden = sigmoid(np.dot(X[i:i+1], W1) + b1)
+    result = sigmoid(np.dot(hidden, W2) + b2)
+
+    print(X[i], "=", round(result[0][0], 3))
+-------------------------------------------------------------------------------------------------------------------------------------------
+Input and Predicted Output:
+[0 0] = 0.01
+[0 1] = 0.987
+[1 0] = 0.984
+[1 1] = 0.017

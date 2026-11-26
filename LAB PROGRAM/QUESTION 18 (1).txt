@@ -1,0 +1,96 @@
+
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import Perceptron
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, classification_report
+
+# Load Iris dataset
+iris = load_iris()
+
+X = iris.data
+y = iris.target
+
+print("Iris Dataset:")
+print("Features:\n", X[:5])
+print("Target:\n", y[:5])
+
+print("\nTotal number of samples:", len(X))
+
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Feature scaling
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Create Perceptron model
+model = Perceptron(max_iter=1000, eta0=0.1, random_state=42)
+
+# Train the model
+model.fit(X_train, y_train)
+
+print("\nPerceptron model trained successfully.")
+
+# Predict test data
+y_pred = model.predict(X_test)
+
+print("\nActual Values:\n", y_test)
+print("\nPredicted Values:\n", y_pred)
+
+# Calculate accuracy
+accuracy = accuracy_score(y_test, y_pred)
+
+print("\nAccuracy:", accuracy * 100, "%")
+
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred, target_names=iris.target_names))
+
+# Predict a new flower
+new_flower = [[5.1, 3.5, 1.4, 0.2]]
+
+new_flower_scaled = scaler.transform(new_flower)
+prediction = model.predict(new_flower_scaled)
+
+print("\nNew Flower Prediction:")
+print(iris.target_names[prediction[0]])
+---------------------------------------------------------------------------------------------------------------
+Iris Dataset:
+Features:
+ [[5.1 3.5 1.4 0.2]
+ [4.9 3.  1.4 0.2]
+ [4.7 3.2 1.3 0.2]
+ [4.6 3.1 1.5 0.2]
+ [5.  3.6 1.4 0.2]]
+Target:
+ [0 0 0 0 0]
+
+Total number of samples: 150
+
+Perceptron model trained successfully.
+
+Actual Values:
+ [1 0 2 1 1 0 1 2 1 1 2 0 0 0 0 1 2 1 1 2 0 2 0 2 2 2 2 2 0 0]
+
+Predicted Values:
+ [1 0 2 1 1 0 1 2 1 1 2 0 0 0 0 1 2 1 1 2 0 1 0 2 2 2 1 2 0 0]
+
+Accuracy: 93.33333333333333 %
+
+Classification Report:
+              precision    recall  f1-score   support
+
+      setosa       1.00      1.00      1.00        10
+  versicolor       0.82      1.00      0.90         9
+   virginica       1.00      0.82      0.90        11
+
+    accuracy                           0.93        30
+   macro avg       0.94      0.94      0.93        30
+weighted avg       0.95      0.93      0.93        30
+
+
+New Flower Prediction:
+setosa

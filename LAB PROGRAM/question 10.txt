@@ -1,0 +1,44 @@
+import numpy as np
+from sklearn.mixture import GaussianMixture
+
+# Sample dataset
+X = np.array([
+    [1.0], [1.5], [2.0], [2.5],
+    [8.0], [8.5], [9.0], [9.5]
+])
+
+# Create EM model
+model = GaussianMixture(
+    n_components=2,
+    random_state=42
+)
+
+# Train model
+model.fit(X)
+
+# Predict clusters
+labels = model.predict(X)
+
+print("Data:")
+print(X.flatten())
+
+print("\nCluster Labels:")
+print(labels)
+
+print("\nCluster Means:")
+print(model.means_.flatten())
+
+print("\nModel Converged:")
+print(model.converged_)
+-----------------------------------------------------------------------------------------------------------------------------------------------
+Data:
+[1.  1.5 2.  2.5 8.  8.5 9.  9.5]
+
+Cluster Labels:
+[0 0 0 0 1 1 1 1]
+
+Cluster Means:
+[1.75 8.75]
+
+Model Converged:
+True

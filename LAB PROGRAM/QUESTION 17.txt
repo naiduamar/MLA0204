@@ -1,0 +1,78 @@
+
+import pandas as pd
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_absolute_error, r2_score
+
+# Create sample mobile dataset
+data = {
+    'RAM': [2, 3, 4, 4, 6, 6, 8, 8, 8, 12, 12, 16],
+    'Storage': [32, 32, 64, 128, 64, 128, 128, 256, 128, 256, 512, 512],
+    'Battery': [3000, 3500, 4000, 4500, 4000, 5000, 4500, 5000, 6000, 5000, 5500, 6000],
+    'Camera': [8, 12, 16, 20, 24, 32, 48, 50, 64, 64, 108, 108],
+    '5G': [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
+    'Price': [5000, 6500, 9000, 11000, 13000, 16000, 20000, 24000, 26000, 35000, 45000, 55000]
+}
+
+df = pd.DataFrame(data)
+
+print("Mobile Dataset:\n")
+print(df)
+
+# Separate input and output
+X = df.drop('Price', axis=1)
+y = df['Price']
+
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=42
+)
+
+# Train Random Forest model
+model = RandomForestRegressor(n_estimators=100, random_state=42)
+model.fit(X_train, y_train)
+
+# Predict prices
+y_pred = model.predict(X_test)
+
+print("\nActual Prices:", list(y_test))
+print("\nPredicted Prices:", y_pred.round(2))
+
+# Evaluate model
+print("\nMean Absolute Error:", mean_absolute_error(y_test, y_pred))
+print("R2 Score:", r2_score(y_test, y_pred))
+
+# Predict price for a new mobile
+new_mobile = pd.DataFrame(
+    [[8, 256, 5000, 64, 1]],
+    columns=['RAM', 'Storage', 'Battery', 'Camera', '5G']
+)
+
+price = model.predict(new_mobile)
+
+print("\nPredicted price of new mobile:", round(price[0], 2))
+------------------------------------------------------------------------------------------------------------
+Mobile Dataset:
+
+    RAM  Storage  Battery  Camera  5G  Price
+0     2       32     3000       8   0   5000
+1     3       32     3500      12   0   6500
+2     4       64     4000      16   0   9000
+3     4      128     4500      20   0  11000
+4     6       64     4000      24   0  13000
+5     6      128     5000      32   1  16000
+6     8      128     4500      48   1  20000
+7     8      256     5000      50   1  24000
+8     8      128     6000      64   1  26000
+9    12      256     5000      64   1  35000
+10   12      512     5500     108   1  45000
+11   16      512     6000     108   1  55000
+
+Actual Prices: [45000, 35000, 5000]
+
+Predicted Prices: [34810. 23280.  7955.]
+
+Mean Absolute Error: 8288.333333333334
+R2 Score: 0.7116232403846154
+
+Predicted price of new mobile: 23280.0
